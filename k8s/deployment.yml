@@ -1,8 +1,10 @@
+# For use with minikube with enabled ingress.
+
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: livenessvsreadiness-deployment
+  name: livenessvsreadiness
   labels:
     app: app-deployment
 spec:
@@ -40,30 +42,30 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: lvs-service
+  name: lvs
 spec:
-  type: NodePort
   selector:
     app: livenessvsreadiness
   ports:
     - protocol: TCP
       port: 80
-      targetPort: http
+      targetPort: 8080
 
 ---
 
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: lvs-ingress
+  name: lvs
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
     - host: livenessvsreadiness.local
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: lvs-service
+              serviceName: lvs
               servicePort: 80

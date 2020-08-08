@@ -1,0 +1,1 @@
+Trivial application to demonstrate Liveness and Readiness Probes on k8s.
